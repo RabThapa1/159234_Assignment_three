@@ -33,14 +33,10 @@ public class DevicesRunner {
         }
     }
 
-    public void displayAllDevices(){
-        for( Devices device : devices ){
-            System.out.println(device);
-        }
+ //Method to return the devices linked list
+    public LinkedList<Devices> getDevices(){
+        return devices;
     }
 
-    public static void main(String[] args){
-        DevicesRunner devicesRunner = new DevicesRunner();
-        devicesRunner.displayAllDevices();
-    }
+
 }
