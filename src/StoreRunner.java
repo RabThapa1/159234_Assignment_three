@@ -26,7 +26,7 @@ public class StoreRunner extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 LoginWindow window = new LoginWindow();
-                dispose();
+                
             }
         });
         setResizable(false);

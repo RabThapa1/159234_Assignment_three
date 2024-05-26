@@ -7,8 +7,13 @@ public class DevicesTabelModel extends AbstractTableModel {
     private List<Devices> devices;
 
     public DevicesTabelModel(List<Devices> devices){
+        setDevices(devices);
+    }
+
+    public void setDevices(List<Devices> devices) {
         this.devices = devices;
     }
+
 
     @Override
     public int getRowCount(){

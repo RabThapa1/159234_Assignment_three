@@ -90,6 +90,14 @@ public class LoginWindow extends JFrame {
             }
         });
 
+        //Add Action listener to logOut button
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
 
         //load Staff details to authenticate
         loadStaffDetails();
