@@ -1,4 +1,4 @@
-public class Desktop extends Devices{
+public class Desktop extends Devices implements HasMemorySize, HasSSD{
 
     private int memorySize;
     private int ssdCapacity;
@@ -11,6 +11,7 @@ public class Desktop extends Devices{
 
     }
 
+    @Override
     public int getMemorySize() {
         return memorySize;
     }
@@ -19,6 +20,7 @@ public class Desktop extends Devices{
         this.memorySize = memorySize;
     }
 
+    @Override
     public int getSsdCapacity() {
         return ssdCapacity;
     }

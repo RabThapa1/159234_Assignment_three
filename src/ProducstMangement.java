@@ -5,7 +5,11 @@ import java.awt.event.ActionListener;
 
 public class ProducstMangement extends JFrame {
 
-    public ProducstMangement(){
+    private boolean isManager;
+
+    public ProducstMangement(boolean isManager){
+
+        this.isManager = isManager;
 
         setTitle("Computer Products Management System");
         setBounds(150,200,1000,1000);
@@ -18,9 +22,11 @@ public class ProducstMangement extends JFrame {
         logOutButton.setVerticalTextPosition(SwingConstants.TOP);
         logOutButton.setFont(new Font("Helvetica", Font.PLAIN, 40));
 
+        CheckOrUpdateProducts checkOrUpdateProducts = new CheckOrUpdateProducts(isManager);
+
         //Creates a tabbed pane frame and add tabbed panels
-        tabbedPane.addTab("Browse Products", new BrowseProductsPanel());
-        tabbedPane.addTab("Check/Update Products Details", new CheckOrUpdateProducts());
+        tabbedPane.addTab("Browse Products", new BrowseProductsPanel(checkOrUpdateProducts));
+        tabbedPane.addTab("Check/Update Products Details", checkOrUpdateProducts);
         add(tabbedPane, BorderLayout.CENTER);
 
         add(logOutButton, BorderLayout.SOUTH);

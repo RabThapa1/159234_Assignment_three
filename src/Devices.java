@@ -64,9 +64,5 @@ public abstract class Devices {
         this.price = price;
     }
 
-    @Override
-    public String toString(){
-        return "Category: "+ getCategory() + " \t\tBrand: " + getBrand() + " \t\tPrice: " + getPrice();
-    }
  }
 

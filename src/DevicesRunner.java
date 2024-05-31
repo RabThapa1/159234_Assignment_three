@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -33,10 +34,45 @@ public class DevicesRunner {
         }
     }
 
- //Method to return the devices linked list
+   //Method to return the devices linked list
     public LinkedList<Devices> getDevices(){
         return devices;
     }
 
+    //Method to add devices
+    public void addDevice(String category, String type, String id,String brand, String cpuFamily, int memorySize,int ssdCapacity,double  screenSize,double price){
 
-}
+        boolean isUnique = checkID(id);
+        if(isUnique){
+            if(category.equals("Laptop")){
+                devices.add(new Laptop(category,type,id,brand,cpuFamily,memorySize,ssdCapacity,screenSize,price));
+;
+            } else if (category.equals("Desktop PC")) {
+                devices.add(new Desktop(category,type,id,brand,cpuFamily,memorySize,ssdCapacity,price));
+            } else if (category.equals("Tablet")) {
+                devices.add(new Tablet(category,type,id,brand,cpuFamily,screenSize,price));
+
+            }
+            JOptionPane.showMessageDialog(null, "The record for the computer is added successfully");
+        }else{
+            JOptionPane.showMessageDialog(null,"Model ID conflict, Device can't be added.");
+        }
+    }
+
+    //Method to check if Model ID is unique
+    private boolean checkID(String id){
+        boolean isUnique = true;
+        for(Devices aDevice : devices){
+            if(aDevice.getId().equals(id)){
+                isUnique = false;
+            }
+            }
+        return isUnique;
+        }
+
+    }
+
+
+
+
+

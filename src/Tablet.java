@@ -1,4 +1,4 @@
-public class Tablet extends Devices{
+public class Tablet extends Devices implements HasScreenSize{
 
     private double screenSize;
 
@@ -7,6 +7,7 @@ public class Tablet extends Devices{
         setScreenSize(screenSize);
     }
 
+    @Override
     public double getScreenSize() {
         return screenSize;
     }

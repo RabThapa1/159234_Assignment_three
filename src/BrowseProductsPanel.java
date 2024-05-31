@@ -1,99 +1,12 @@
-//import javax.swing.*;
-//import java.awt.*;
-//import java.util.HashSet;
-//import java.util.Set;
-//
-//public class BrowseProductsPanel extends JPanel {
-//
-//    JLabel computerCategoryLabel;
-//    JComboBox computerCategory;
-//    JLabel computerTypeLabel;
-//    JComboBox computerType;
-//    DevicesRunner devices = new DevicesRunner();
-//
-//    public BrowseProductsPanel(){
-//
-//        computerCategoryLabel = new JLabel("Computer Category");
-//        computerCategory = new JComboBox();
-//        computerTypeLabel = new JLabel("Computer Type");
-//        computerType = new JComboBox();
-//
-//        setLayout(null);
-//
-//        // Set fonts
-//        computerCategoryLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-//        computerCategory.setFont(new Font("Arial", Font.PLAIN, 15));
-//        computerTypeLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-//        computerType.setFont(new Font("Arial", Font.PLAIN, 15));
-//
-//        // Set bounds (x, y, width, height)
-//        computerCategoryLabel.setBounds(10, 10, 140, 20);
-//        computerCategory.setBounds(160, 10, 140, 20);
-//        computerTypeLabel.setBounds(10, 40, 140, 20);
-//        computerType.setBounds(160, 40, 140, 20);
-//
-//
-//        //call method to add item to JComboBox
-//        updateJComboBox();
-//
-//        //Create a table model
-//        DevicesTabelModel model = new DevicesTabelModel(devices.getDevices());
-//
-//        //Create JTable with custom model
-//        JTable table = new JTable(model);
-//
-//        //Add the table to a JScrollPane
-//        JScrollPane scrollPane = new JScrollPane(table);
-//
-//        // Set bounds for the JScrollPane
-//        scrollPane.setBounds(10, 80, 460, 300);  // Adjust the size as needed
-//        // Add components to panel
-//        add(computerCategoryLabel);
-//        add(computerCategory);
-//        add(computerTypeLabel);
-//        add(computerType);
-//        add(scrollPane);
-//
-//
-//
-//
-//    }
-//
-//    public void updateJComboBox(){
-//
-//
-//        Set<String> addedCategories = new HashSet<>();
-//        Set<String> addedComputerTypes = new HashSet<>();
-//
-//        for(Devices aDevice : devices.getDevices()){
-//
-//            String category = aDevice.getCategory();
-//            String type = aDevice.getType();
-//
-//            if(!addedCategories.contains(category)) {
-//                computerCategory.addItem(aDevice.getCategory());
-//                addedCategories.add(category);
-//            }
-//
-//            if(!addedComputerTypes.contains(type)) {
-//                computerType.addItem(aDevice.getType());
-//                addedComputerTypes.add(type);
-//
-//            }
-//
-//        }
-//    }
-//
-//}
-
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BrowseProductsPanel extends JPanel {
 
@@ -103,13 +16,15 @@ public class BrowseProductsPanel extends JPanel {
     JComboBox<String> computerType;
     DevicesRunner devices = new DevicesRunner();
     DevicesTabelModel model;
+    CheckOrUpdateProducts checkOrUpdateProductsPanel;
 
-    public BrowseProductsPanel() {
+    public BrowseProductsPanel(CheckOrUpdateProducts checkOrUpdateProductsPanel) {
         // Initialize components
         computerCategoryLabel = new JLabel("Computer Category");
         computerCategory = new JComboBox<>();
         computerTypeLabel = new JLabel("Computer Type");
         computerType = new JComboBox<>();
+        this.checkOrUpdateProductsPanel = checkOrUpdateProductsPanel;
 
         // Set fonts
         computerCategoryLabel.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -164,12 +79,15 @@ public class BrowseProductsPanel extends JPanel {
         computerCategory.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sorter.setRowFilter(new RowFilter() {
+                String selectedCategory = (String) computerCategory.getSelectedItem();
+                sorter.setRowFilter(new RowFilter<DevicesTabelModel, Integer>() {
                     @Override
-                    public boolean include(Entry entry) {
-                        String name = entry.getValue(0).toString();
-                        return name.contentEquals(((String)computerCategory.getSelectedItem()));
-
+                    public boolean include(Entry<? extends DevicesTabelModel, ? extends Integer> entry) {
+                        if ("All".equals(selectedCategory)) {
+                            return true; // Include all rows
+                        }
+                        String category = entry.getValue(0).toString();
+                        return category.equals(selectedCategory);
                     }
                 });
             }
@@ -178,20 +96,53 @@ public class BrowseProductsPanel extends JPanel {
         computerType.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sorter.setRowFilter(new RowFilter() {
+                String selectedType = (String) computerType.getSelectedItem();
+                sorter.setRowFilter(new RowFilter<DevicesTabelModel, Integer>() {
                     @Override
-                    public boolean include(Entry entry) {
-                        String name = entry.getValue(0).toString();
-                        return name.contentEquals(((String)computerType.getSelectedItem()));
-
+                    public boolean include(Entry<? extends DevicesTabelModel, ? extends Integer> entry) {
+                        if ("All".equals(selectedType)) {
+                            return true; // Include all rows
+                        }
+                        String type = entry.getValue(1).toString();
+                        return type.equals(selectedType);
                     }
                 });
             }
         });
 
-        // Ensure proper repainting
-        revalidate();
-        repaint();
+
+        // Add ListSelectionListener to the table
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow != -1) {
+                        // Convert the selected row index in the view to the model index
+                        int modelRow = table.convertRowIndexToModel(selectedRow);
+                        Devices selectedDevice = devices.getDevices().get(modelRow);
+
+                        String id = selectedDevice.getId();
+                        String category = selectedDevice.getCategory();
+                        String type = selectedDevice.getType();
+                        String cpuFamily = selectedDevice.getCpuFamily();
+                        String brand = selectedDevice.getBrand();
+                        double price = selectedDevice.getPrice();
+
+                        String ssdCapacity = String.valueOf(selectedDevice instanceof HasSSD ? ((HasSSD) selectedDevice).getSsdCapacity():null);
+                        String memorySize = String.valueOf(selectedDevice instanceof HasMemorySize ? ((HasMemorySize) selectedDevice).getMemorySize():null);
+                        String screenSize = String.valueOf(selectedDevice instanceof HasScreenSize ? ((HasScreenSize) selectedDevice).getScreenSize():null);
+
+
+                        // Update the CheckOrUpdateProducts panel with the selected row data
+                        checkOrUpdateProductsPanel.updateFields( category,type,id,brand, cpuFamily, memorySize,ssdCapacity,screenSize,price );
+
+                    }
+                }
+            }
+        });
+
+
     }
 
 
@@ -217,5 +168,9 @@ public class BrowseProductsPanel extends JPanel {
                 addedComputerTypes.add(type);
             }
         }
+        // Add "All" option to JComboBox
+        computerCategory.addItem("All");
+        computerType.addItem("All");
+
     }
 }

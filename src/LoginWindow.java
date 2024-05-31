@@ -81,7 +81,13 @@ public class LoginWindow extends JFrame {
                         JOptionPane.showMessageDialog(null,"Login Successfull");
                         isSuccesfull = true;
                         dispose();
-                        new ProducstMangement();
+                        if(userText.equals("m1") || userText.equals("m2")){
+                            new ProducstMangement(true);
+                        }
+                        else {
+                            new ProducstMangement(false);
+                        }
+
                     }
                 }
                 if(!isSuccesfull){
@@ -91,12 +97,7 @@ public class LoginWindow extends JFrame {
         });
 
         //Add Action listener to logOut button
-        cancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        cancel.addActionListener(e -> dispose());
 
 
         //load Staff details to authenticate

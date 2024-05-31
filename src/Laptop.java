@@ -1,4 +1,4 @@
-public class Laptop extends Devices{
+public class Laptop extends Devices implements HasScreenSize, HasMemorySize, HasSSD{
 
     private int memorySize;
     private int ssdCapacity;
@@ -12,6 +12,7 @@ public class Laptop extends Devices{
         setScreenSize(screenSize);
     }
 
+    @Override
     public int getMemorySize() {
         return memorySize;
     }
@@ -20,14 +21,17 @@ public class Laptop extends Devices{
         this.memorySize = memorySize;
     }
 
+
+    @Override
     public int getSsdCapacity() {
-        return ssdCapacity;
+        return ssdCapacity ;
     }
 
     public void setSsdCapacity(int ssdCapacity) {
         this.ssdCapacity = ssdCapacity;
     }
 
+    @Override
     public double getScreenSize() {
         return screenSize;
     }
