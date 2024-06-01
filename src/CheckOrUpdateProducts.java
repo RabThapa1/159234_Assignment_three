@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CheckOrUpdateProducts extends JPanel {
 
@@ -101,26 +102,24 @@ public class CheckOrUpdateProducts extends JPanel {
             categoryField.addItem(category);
         }
 
+        //Ensure appropriate text field is editable based on category selected when the frame loads
+        updateFieldEditabilityBasedOnCategory((String) categoryField.getSelectedItem());
+
         String[] types = {"Gaming", "Home & Study", "Business", "Compact", "Thin & Light", "Android", "Windows"};
         for(String type : types){
             typeField.addItem(type);
         }
 
+
         //call the method to enable or disable ability to edit or disable the field.
         updateFieldEditability();
 
         //Add action listener to the Clear button
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modelField.setText("");
-                brandField.setText("");
-                cpuFamilyField.setText("");
-                memorySizeField.setText("");
-                screenSizeField.setText("");
-                ssdCapacityField.setText("");
-                priceField.setText("");
-            }
+        clearButton.addActionListener(e -> {
+
+            //calling method clearFields to clear the Fields of any text.
+            clearFields();
+
         });
 
         //Action listener method to the Add button
@@ -132,24 +131,36 @@ public class CheckOrUpdateProducts extends JPanel {
                 String type = String.valueOf(typeField.getSelectedItem());
                 String cpuFamily = cpuFamilyField.getText();
                 String brand = brandField.getText();
-                double price = Double.parseDouble(priceField.getText());
 
-                int ssdCapacity = getIntegerValue(ssdCapacityField);
-                int memorySize = getIntegerValue(memorySizeField);
+                AtomicBoolean errorFlag = new AtomicBoolean(false);
 
-                double screenSize = 0;
-                try{
-                    screenSize = Double.parseDouble(screenSizeField.getText());
-                }catch (NullPointerException ignored){
-                    screenSize =0.0;
-                }catch (NumberFormatException e2){
-                    JOptionPane.showMessageDialog(null, "Wrong format, Please provide int value");
-                    screenSizeField.setText("");
-                    return;
+                double price = getDoubleValue(priceField, priceLabel,errorFlag);
+                int ssdCapacity = getIntegerValue(ssdCapacityField, ssdCapacityLabel,errorFlag);
+                int memorySize = getIntegerValue(memorySizeField, memorySizeLabel,errorFlag);
+                double screenSize = getDoubleValue(screenSizeField, screenSizeLabel,errorFlag);
+
+                // Check for error flag
+                if(errorFlag.get()){
+                    // Show an error message or do nothing
+                    JOptionPane.showMessageDialog(null, "Please correct the input value");
+                }else {
+                    // Add the device only if all values are correct
+                    devices.addDevice(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price);
                 }
+            }
+        });
 
-                devices.addDevice(category,type,id,brand,cpuFamily,memorySize,ssdCapacity,screenSize,price);
 
+        //Action listener method to delete device entry
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id = modelField.getText();
+
+                devices.deleteDevice(id);
+
+                //once the item is deleted, calling clearField method to clear the fields of any text
+                clearFields();
             }
         });
 
@@ -158,21 +169,7 @@ public class CheckOrUpdateProducts extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedCategory = String.valueOf(categoryField.getSelectedItem());
-
-                // Update field editability based on the selected category
-                if ("Desktop PC".equals(selectedCategory)) {
-                    screenSizeField.setEnabled(false);
-                    memorySizeField.setEnabled(true);
-                    ssdCapacityField.setEnabled(true);
-                } else if ("Tablet".equals(selectedCategory)) {
-                    screenSizeField.setEnabled(true);
-                    memorySizeField.setEnabled(false);
-                    ssdCapacityField.setEnabled(false);
-                } else if ("Laptop".equals(selectedCategory)) {
-                    screenSizeField.setEnabled(true);
-                    memorySizeField.setEnabled(true);
-                    ssdCapacityField.setEnabled(true);
-                }
+                updateFieldEditabilityBasedOnCategory(selectedCategory);
             }
         });
 
@@ -216,10 +213,12 @@ public class CheckOrUpdateProducts extends JPanel {
         brandField.setText(brand);
         priceField.setText(String.valueOf(price));
 
-        //Handle Optional Fields
+        //Handle Optional Fields, SetOptionalFieldText method is called to update the fields accordingly.
         setOptionalFieldText(ssdCapacityField, ssdCapacity);
         setOptionalFieldText(memorySizeField, memorySize);
         setOptionalFieldText(screenSizeField, screenSize);
+
+        memorySizeLabel.getName();
 
 
     }
@@ -237,18 +236,85 @@ public class CheckOrUpdateProducts extends JPanel {
     }
 
     //Method to run try catch block and return integer value. Reduce code clutter
-    private int getIntegerValue(JTextField field){
+    private int getIntegerValue(JTextField field, JLabel label, AtomicBoolean errorFlag){
+
+        /*Not all the field are required for all category, if a certain field is empty/null zero is returned. when the
+        method to add the item is called located in DevicesRunner class, it will use constructor based on the category*/
 
         int temp = 0;
-        try{
-            temp = Integer.parseInt(field.getText());
-            }catch (NullPointerException ignored){
-        }catch (NumberFormatException event){
-            JOptionPane.showMessageDialog(null, "Wrong format, Please provide int value");
-            field.setText("");
+
+        if(field.getText().trim().isEmpty()){
+            return temp;
+        }
+
+        else {
+            try {
+                temp = Integer.parseInt(field.getText());
+            } catch (NullPointerException ignored) {
+            } catch (NumberFormatException event) {
+                JOptionPane.showMessageDialog(null, "Wrong format, Please provide int value for " + label.getText());
+                field.setText("");
+                errorFlag.set(true);
+            }
         }
 
         return temp;
+    }
+
+    //Method to run try catch block and return double value. Reduce code Clutter
+    private double getDoubleValue(JTextField field, JLabel label, AtomicBoolean errorFlag){
+
+        /*Not all the field are required for all category, if a certain field is empty/null zero is returned. when the
+        method to add the item is called located in DevicesRunner class, it will use constructor based on the category*/
+
+        double temp = 0.0;
+
+      if(field.getText().trim().isEmpty()){
+          return temp;
+      }else {
+          try {
+              temp = Double.parseDouble(field.getText());
+          } catch (NumberFormatException e) {
+              JOptionPane.showMessageDialog(null, "Wrong format, Please provide double value for " + label.getText());
+              field.setText("");
+              errorFlag.set(true);
+          }
+      }
+        return temp;
+    }
+
+    // Method to update field editability based on the selected category
+    private void updateFieldEditabilityBasedOnCategory(String selectedCategory) {
+
+        // Update field editability based on the selected category
+        if ("Desktop PC".equals(selectedCategory)) {
+            screenSizeField.setEnabled(false);
+            memorySizeField.setEnabled(true);
+            ssdCapacityField.setEnabled(true);
+        } else if ("Tablet".equals(selectedCategory)) {
+            screenSizeField.setEnabled(true);
+            memorySizeField.setEnabled(false);
+            ssdCapacityField.setEnabled(false);
+        } else if ("Laptop".equals(selectedCategory)) {
+            screenSizeField.setEnabled(true);
+            memorySizeField.setEnabled(true);
+            ssdCapacityField.setEnabled(true);
+        }
+    }
+
+    //Method to clear the fields
+    private void clearFields(){
+        modelField.setText("");
+        brandField.setText("");
+        cpuFamilyField.setText("");
+        memorySizeField.setText("");
+        screenSizeField.setText("");
+        ssdCapacityField.setText("");
+        priceField.setText("");
+
+        ssdCapacityField.setEditable(isManager);
+        memorySizeField.setEditable(isManager);
+        screenSizeField.setEditable(isManager);
     }
 
 

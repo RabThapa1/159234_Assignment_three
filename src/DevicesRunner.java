@@ -1,12 +1,14 @@
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class DevicesRunner {
 
     private LinkedList<Devices> devices;
+
 
     public DevicesRunner(){
 
@@ -44,16 +46,17 @@ public class DevicesRunner {
 
         boolean isUnique = checkID(id);
         if(isUnique){
-            if(category.equals("Laptop")){
-                devices.add(new Laptop(category,type,id,brand,cpuFamily,memorySize,ssdCapacity,screenSize,price));
-;
-            } else if (category.equals("Desktop PC")) {
-                devices.add(new Desktop(category,type,id,brand,cpuFamily,memorySize,ssdCapacity,price));
-            } else if (category.equals("Tablet")) {
-                devices.add(new Tablet(category,type,id,brand,cpuFamily,screenSize,price));
+            switch (category) {
+                case "Laptop" -> {
+                    devices.add(new Laptop(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price));
 
+                }
+                case "Desktop PC" ->
+                        devices.add(new Desktop(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, price));
+                case "Tablet" -> devices.add(new Tablet(category, type, id, brand, cpuFamily, screenSize, price));
             }
             JOptionPane.showMessageDialog(null, "The record for the computer is added successfully");
+
         }else{
             JOptionPane.showMessageDialog(null,"Model ID conflict, Device can't be added.");
         }
@@ -65,9 +68,24 @@ public class DevicesRunner {
         for(Devices aDevice : devices){
             if(aDevice.getId().equals(id)){
                 isUnique = false;
+                break;
             }
             }
         return isUnique;
+        }
+
+        //Method to delete the entry
+        public void deleteDevice(String id){
+
+        Iterator<Devices> iterator = devices.iterator();
+        while (iterator.hasNext()){
+            Devices aDevice = iterator.next();
+            if(aDevice.getId().equals(id)){
+                iterator.remove();
+                JOptionPane.showMessageDialog(null, "Device with id "+ id + " deleted successfully.");
+                break;
+            }
+        }
         }
 
     }

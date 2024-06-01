@@ -15,7 +15,6 @@ public class BrowseProductsPanel extends JPanel {
     JLabel computerTypeLabel;
     JComboBox<String> computerType;
     DevicesRunner devices = new DevicesRunner();
-    DevicesTabelModel model;
     CheckOrUpdateProducts checkOrUpdateProductsPanel;
 
     public BrowseProductsPanel(CheckOrUpdateProducts checkOrUpdateProductsPanel) {
@@ -34,6 +33,9 @@ public class BrowseProductsPanel extends JPanel {
 
         // Call method to add items to JComboBox
         updateJComboBox();
+
+        //When this panel is loaded, I want to have All selected by default in the categoryComboBox
+        computerCategory.setSelectedItem("All");
 
         // Create a table model
         DevicesTabelModel model = new DevicesTabelModel(devices.getDevices());
@@ -144,6 +146,8 @@ public class BrowseProductsPanel extends JPanel {
 
 
     }
+
+
 
 
 
