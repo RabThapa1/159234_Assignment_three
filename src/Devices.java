@@ -64,5 +64,9 @@ public abstract class Devices {
         this.price = price;
     }
 
+    @Override
+    public String toString(){
+        return "Id "+ getId()+" category " + getCategory()+ " type "+ getType() + " price "+ getPrice();
+    }
  }
 

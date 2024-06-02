@@ -5,14 +5,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import static javax.swing.JOptionPane.*;
+
 public class DevicesRunner {
 
     private LinkedList<Devices> devices;
 
-
     public DevicesRunner(){
 
         devices = new LinkedList<>();
+
 
         try{
 
@@ -47,18 +49,18 @@ public class DevicesRunner {
         boolean isUnique = checkID(id);
         if(isUnique){
             switch (category) {
-                case "Laptop" -> {
-                    devices.add(new Laptop(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price));
+                case "Laptop" -> devices.add(new Laptop(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price));
 
-                }
                 case "Desktop PC" ->
                         devices.add(new Desktop(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, price));
                 case "Tablet" -> devices.add(new Tablet(category, type, id, brand, cpuFamily, screenSize, price));
             }
-            JOptionPane.showMessageDialog(null, "The record for the computer is added successfully");
+            showMessageDialog(null, "The record for the computer is added successfully");
+            printDevices(); //remove this
+
 
         }else{
-            JOptionPane.showMessageDialog(null,"Model ID conflict, Device can't be added.");
+            showMessageDialog(null,"Model ID conflict, Device can't be added.");
         }
     }
 
@@ -82,11 +84,65 @@ public class DevicesRunner {
             Devices aDevice = iterator.next();
             if(aDevice.getId().equals(id)){
                 iterator.remove();
-                JOptionPane.showMessageDialog(null, "Device with id "+ id + " deleted successfully.");
+                showMessageDialog(null, "Device with id "+ id + " deleted successfully.");
                 break;
+
+            }
+
+        }
+
+            printDevices();//remove this
+        }
+
+        //Method to update the entry
+    public void updateDevice(String category, String type, String id,String brand, String cpuFamily, int memorySize,int ssdCapacity,double  screenSize,double price){
+
+        for(Devices aDevice : devices){
+            if(aDevice.getId().equals(id)){
+                switch (category) {
+                    case "Laptop" -> {
+                       aDevice.setCategory(category);
+                       aDevice.setType(type);
+                       aDevice.setBrand(brand);
+                       aDevice.setCpuFamily(cpuFamily);
+                       ((Laptop) aDevice).setMemorySize(memorySize);
+                       ((Laptop)aDevice).setSsdCapacity(ssdCapacity);
+                       ((Laptop)aDevice).setScreenSize(screenSize);
+                       aDevice.setPrice(price);
+
+                    }
+                    case "Desktop PC" -> {
+                        aDevice.setCategory(category);
+                        aDevice.setType(type);
+                        aDevice.setBrand(brand);
+                        aDevice.setCpuFamily(cpuFamily);
+                        aDevice.setPrice(price);
+                        ((Desktop) aDevice).setMemorySize(memorySize);
+                        ((Desktop)aDevice).setSsdCapacity(ssdCapacity);
+                    }
+                    case "Tablet" -> {
+                        aDevice.setCategory(category);
+                        aDevice.setType(type);
+                        aDevice.setBrand(brand);
+                        aDevice.setCpuFamily(cpuFamily);
+                        aDevice.setPrice(price);
+                        ((Tablet) aDevice).setScreenSize(screenSize);
+                    }
+                }
             }
         }
+
+        printDevices();//remove this
+    }
+
+
+    private void printDevices(){
+        for(Devices aDevice : devices){
+            System.out.println(aDevice);
         }
+    }
+
+
 
     }
 

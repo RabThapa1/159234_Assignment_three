@@ -29,14 +29,15 @@ public class CheckOrUpdateProducts extends JPanel {
     private JButton updateButton;
     private JButton deleteButton;
     private JButton clearButton;
-
+    DevicesRunner devices;
 
     public CheckOrUpdateProducts(boolean isManager){
 
         this.isManager = isManager;
-        DevicesRunner devices = new DevicesRunner();
+        devices = new DevicesRunner();
 
-        //initialise Jcomponents
+
+        //initialise J Components
          modelLabel = new JLabel("Model ID:");
          modelField = new JTextField(20);
          brandLabel  = new JLabel("Brand");
@@ -146,6 +147,8 @@ public class CheckOrUpdateProducts extends JPanel {
                 }else {
                     // Add the device only if all values are correct
                     devices.addDevice(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price);
+
+
                 }
             }
         });
@@ -161,6 +164,39 @@ public class CheckOrUpdateProducts extends JPanel {
 
                 //once the item is deleted, calling clearField method to clear the fields of any text
                 clearFields();
+
+
+            }
+        });
+
+        //Action listener method to update device entry
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id = modelField.getText();
+                String category = String.valueOf(categoryField.getSelectedItem());
+                String type = String.valueOf(typeField.getSelectedItem());
+                String cpuFamily = cpuFamilyField.getText();
+                String brand = brandField.getText();
+
+                AtomicBoolean errorFlag = new AtomicBoolean(false);
+
+                double price = getDoubleValue(priceField, priceLabel,errorFlag);
+                int ssdCapacity = getIntegerValue(ssdCapacityField, ssdCapacityLabel,errorFlag);
+                int memorySize = getIntegerValue(memorySizeField, memorySizeLabel,errorFlag);
+                double screenSize = getDoubleValue(screenSizeField, screenSizeLabel,errorFlag);
+
+                // Check for error flag
+                if(errorFlag.get()){
+                    // Show an error message or do nothing
+                    JOptionPane.showMessageDialog(null, "Please correct the input value");
+                }else {
+                    // Add the device only if all values are correct
+                    devices.updateDevice(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price);
+
+
+                }
+
             }
         });
 

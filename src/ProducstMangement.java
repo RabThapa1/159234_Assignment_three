@@ -6,6 +6,9 @@ import java.awt.event.ActionListener;
 public class ProducstMangement extends JFrame {
 
     private boolean isManager;
+    CheckOrUpdateProducts checkOrUpdateProducts;
+    BrowseProductsPanel browseProductsPanel;
+    DevicesRunner devices;
 
     public ProducstMangement(boolean isManager){
 
@@ -22,22 +25,27 @@ public class ProducstMangement extends JFrame {
         logOutButton.setVerticalTextPosition(SwingConstants.TOP);
         logOutButton.setFont(new Font("Helvetica", Font.PLAIN, 40));
 
-        CheckOrUpdateProducts checkOrUpdateProducts = new CheckOrUpdateProducts(isManager);
+// Initialize CheckOrUpdateProducts and BrowseProductsPanel after DevicesRunner
+        checkOrUpdateProducts = new CheckOrUpdateProducts(isManager);
+        browseProductsPanel = new BrowseProductsPanel(checkOrUpdateProducts);
+         devices = new DevicesRunner();
+
+
+
+
+
 
         //Creates a tabbed pane frame and add tabbed panels
-        tabbedPane.addTab("Browse Products", new BrowseProductsPanel(checkOrUpdateProducts));
+        tabbedPane.addTab("Browse Products", browseProductsPanel);
         tabbedPane.addTab("Check/Update Products Details", checkOrUpdateProducts);
         add(tabbedPane, BorderLayout.CENTER);
 
         add(logOutButton, BorderLayout.SOUTH);
 
         //Add Button action listener
-        logOutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                new StoreRunner();
-            }
+        logOutButton.addActionListener(e -> {
+            dispose();
+            new StoreRunner();
         });
 
         setVisible(true);

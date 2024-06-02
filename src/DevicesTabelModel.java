@@ -28,26 +28,20 @@ public class DevicesTabelModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex){
         Devices device = devices.get(rowIndex);
-        switch (columnIndex){
-            case 0:
-                return device.getCategory();
-            case 1:
-                return device.getType();
-            case 2:
-                return device.getId();
-            case 3:
-                return device.getBrand();
-            case 4:
-                return device.getCpuFamily();
-            case 5:
-                return device.getPrice();
-            default:
-                return null;
-
-        }
+        return switch (columnIndex) {
+            case 0 -> device.getCategory();
+            case 1 -> device.getType();
+            case 2 -> device.getId();
+            case 3 -> device.getBrand();
+            case 4 -> device.getCpuFamily();
+            case 5 -> device.getPrice();
+            default -> null;
+        };
     }
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
+
+
 }

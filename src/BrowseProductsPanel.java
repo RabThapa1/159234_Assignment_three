@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class BrowseProductsPanel extends JPanel {
@@ -14,8 +15,9 @@ public class BrowseProductsPanel extends JPanel {
     JComboBox<String> computerCategory;
     JLabel computerTypeLabel;
     JComboBox<String> computerType;
-    DevicesRunner devices = new DevicesRunner();
+    private DevicesRunner devices;
     CheckOrUpdateProducts checkOrUpdateProductsPanel;
+    DevicesTabelModel model;
 
     public BrowseProductsPanel(CheckOrUpdateProducts checkOrUpdateProductsPanel) {
         // Initialize components
@@ -24,6 +26,8 @@ public class BrowseProductsPanel extends JPanel {
         computerTypeLabel = new JLabel("Computer Type");
         computerType = new JComboBox<>();
         this.checkOrUpdateProductsPanel = checkOrUpdateProductsPanel;
+        devices = new DevicesRunner();
+
 
         // Set fonts
         computerCategoryLabel.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -38,7 +42,7 @@ public class BrowseProductsPanel extends JPanel {
         computerCategory.setSelectedItem("All");
 
         // Create a table model
-        DevicesTabelModel model = new DevicesTabelModel(devices.getDevices());
+         model = new DevicesTabelModel(devices.getDevices());
 
         // Create JTable with custom model
         JTable table = new JTable(model);
@@ -145,10 +149,9 @@ public class BrowseProductsPanel extends JPanel {
         });
 
 
+
+
     }
-
-
-
 
 
 
@@ -177,4 +180,7 @@ public class BrowseProductsPanel extends JPanel {
         computerType.addItem("All");
 
     }
+
+
+
 }
