@@ -41,9 +41,9 @@ public class CheckOrUpdateProducts extends JPanel {
         JLabel brandLabel = new JLabel("Brand");
          brandField  = new JTextField(20);
         JLabel categoryLabel = new JLabel("Category:");
-         categoryField = new JComboBox<String>();
+         categoryField = new JComboBox<>();
         JLabel typeLabel = new JLabel("Type:");
-         typeField = new JComboBox<String>();
+         typeField = new JComboBox<>();
         JLabel cpuFamilyLabel = new JLabel("CPU Family");
          cpuFamilyField = new JTextField(20);
          memorySizeLabel = new JLabel("Memory Size");
@@ -193,7 +193,6 @@ public class CheckOrUpdateProducts extends JPanel {
                     JOptionPane.showMessageDialog(null, "Please correct the input value");
                 }else {
                     // Add the device only if all values are correct
-                    System.out.println("Update");
                     devices.updateDevice(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price);
                     model.refreshData(devices.getDevices());
 
@@ -283,15 +282,14 @@ public class CheckOrUpdateProducts extends JPanel {
 
         int temp = 0;
 
-        if(field.getText().trim().isEmpty()){
+        //if the field is not enabled and is empty. return temp.
+        if(!field.isEnabled() &&field.getText().trim().isEmpty()){
             return temp;
-        }
 
-        else {
+        } else {
             try {
                 temp = Integer.parseInt(field.getText());
-            } catch (NullPointerException ignored) {
-            } catch (NumberFormatException event) {
+            }  catch (NumberFormatException event) {
                 JOptionPane.showMessageDialog(null, "Wrong format, Please provide int value for " + label.getText());
                 field.setText("");
                 errorFlag.set(true);
@@ -309,7 +307,8 @@ public class CheckOrUpdateProducts extends JPanel {
 
         double temp = 0.0;
 
-      if(field.getText().trim().isEmpty()){
+        //if the field is not enabled and is empty. return temp.
+      if(!field.isEnabled() &&field.getText().trim().isEmpty()){
           return temp;
       }else {
           try {
@@ -358,9 +357,7 @@ public class CheckOrUpdateProducts extends JPanel {
             ssdCapacityField.setEditable(true);
         }
 
-        // Revalidate and repaint to ensure UI updates
-        revalidate();
-        repaint();
+
     }
 
     //Method to clear the fields

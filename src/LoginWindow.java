@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 public class LoginWindow extends JFrame {
 
-    private final JFrame parentFrame;  // Reference to the parent frame
 
     public LoginWindow(JFrame parentFrame){
 
@@ -15,7 +14,6 @@ public class LoginWindow extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        this.parentFrame = parentFrame;
 
         //Initialise JComponents required for Login window.
         JLabel userNameLabel = new JLabel("Username: ");

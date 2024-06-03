@@ -101,42 +101,47 @@ public class DevicesRunner {
 
         boolean isUpdateSuccessfull = false;
 
-        for(Devices aDevice : devices){
-            if(aDevice.getId().equals(id)){
-                switch (category) {
-                    case "Laptop" -> {
-                       aDevice.setCategory(category);
-                       aDevice.setType(type);
-                       aDevice.setBrand(brand);
-                       aDevice.setCpuFamily(cpuFamily);
-                       ((Laptop) aDevice).setMemorySize(memorySize);
-                       ((Laptop)aDevice).setSsdCapacity(ssdCapacity);
-                       ((Laptop)aDevice).setScreenSize(screenSize);
-                       aDevice.setPrice(price);
+        try {
+            for (Devices aDevice : devices) {
+                //only attempt to update if there is a matching id and the category of the device provided matches with the existing category.
+                if (aDevice.getId().equals(id) && aDevice.getCategory().equals(category)) {
+                    switch (category) {
+                        case "Laptop" -> {
+                            aDevice.setCategory(category);
+                            aDevice.setType(type);
+                            aDevice.setBrand(brand);
+                            aDevice.setCpuFamily(cpuFamily);
+                            ((Laptop) aDevice).setMemorySize(memorySize);
+                            ((Laptop) aDevice).setSsdCapacity(ssdCapacity);
+                            ((Laptop) aDevice).setScreenSize(screenSize);
+                            aDevice.setPrice(price);
 
+                        }
+                        case "Desktop PC" -> {
+                            aDevice.setCategory(category);
+                            aDevice.setType(type);
+                            aDevice.setBrand(brand);
+                            aDevice.setCpuFamily(cpuFamily);
+                            aDevice.setPrice(price);
+                            ((Desktop) aDevice).setMemorySize(memorySize);
+                            ((Desktop) aDevice).setSsdCapacity(ssdCapacity);
+                        }
+                        case "Tablet" -> {
+                            aDevice.setCategory(category);
+                            aDevice.setType(type);
+                            aDevice.setBrand(brand);
+                            aDevice.setCpuFamily(cpuFamily);
+                            aDevice.setPrice(price);
+                            ((Tablet) aDevice).setScreenSize(screenSize);
+                        }
                     }
-                    case "Desktop PC" -> {
-                        aDevice.setCategory(category);
-                        aDevice.setType(type);
-                        aDevice.setBrand(brand);
-                        aDevice.setCpuFamily(cpuFamily);
-                        aDevice.setPrice(price);
-                        ((Desktop) aDevice).setMemorySize(memorySize);
-                        ((Desktop)aDevice).setSsdCapacity(ssdCapacity);
-                    }
-                    case "Tablet" -> {
-                        aDevice.setCategory(category);
-                        aDevice.setType(type);
-                        aDevice.setBrand(brand);
-                        aDevice.setCpuFamily(cpuFamily);
-                        aDevice.setPrice(price);
-                        ((Tablet) aDevice).setScreenSize(screenSize);
-                    }
+                    isUpdateSuccessfull = true;
+                    showMessageDialog(null, "This computer record updated successfully");
                 }
-                isUpdateSuccessfull = true;
-                showMessageDialog(null, "This computer record updated successfully");
             }
-            }
+        }catch (ClassCastException e){
+            System.out.println(e.getMessage());
+        }
 
         //if no model found while update method is called, Prompt user that Model Id can't be changed.
         if(!isUpdateSuccessfull){
