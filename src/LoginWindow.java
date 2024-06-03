@@ -94,7 +94,7 @@ public class LoginWindow extends JFrame {
                     if(userText.equals(aStaff.getUserName()) && pwdText.equals(aStaff.getPassword())){
                         JOptionPane.showMessageDialog(null,"Login Successful");
                         isSuccesfull = true;
-                        parentFrame.dispose();
+                        parentFrame.dispose(); //disposes Parent frame that calls the login window.
                         dispose();
                         if(userText.equals("m1") || userText.equals("m2")){
                             new ProductManagement(true);
