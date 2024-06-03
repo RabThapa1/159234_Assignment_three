@@ -1,12 +1,12 @@
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
-public class DevicesTabelModel extends AbstractTableModel {
+public class DevicesTableModel extends AbstractTableModel {
 
-    private String[] columnNames = {"Category", "Type", "ID", "Brand","CPU Family", "Price($)"};
+    private final String[] columnNames = {"Category", "Type", "ID", "Brand","CPU Family", "Price($)"};
     private List<Devices> devices;
 
-    public DevicesTabelModel(List<Devices> devices){
+    public DevicesTableModel(List<Devices> devices){
         setDevices(devices);
     }
 
@@ -43,5 +43,8 @@ public class DevicesTabelModel extends AbstractTableModel {
         return columnNames[column];
     }
 
-
+    public void refreshData(List<Devices> updatedDevices){
+        this.devices = updatedDevices;
+        fireTableDataChanged();
+    }
 }

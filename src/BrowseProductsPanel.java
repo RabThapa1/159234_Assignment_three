@@ -6,27 +6,22 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 public class BrowseProductsPanel extends JPanel {
 
-    JLabel computerCategoryLabel;
-    JComboBox<String> computerCategory;
-    JLabel computerTypeLabel;
-    JComboBox<String> computerType;
-    private DevicesRunner devices;
-    CheckOrUpdateProducts checkOrUpdateProductsPanel;
-    DevicesTabelModel model;
+    private final JComboBox<String> computerCategory;
+    private final JComboBox<String> computerType;
+    private final DevicesRunner devices;
 
-    public BrowseProductsPanel(CheckOrUpdateProducts checkOrUpdateProductsPanel) {
+    public BrowseProductsPanel(CheckOrUpdateProducts checkOrUpdateProductsPanel, DevicesTableModel model, DevicesRunner devices) {
+
         // Initialize components
-        computerCategoryLabel = new JLabel("Computer Category");
+        JLabel computerCategoryLabel = new JLabel("Computer Category");
         computerCategory = new JComboBox<>();
-        computerTypeLabel = new JLabel("Computer Type");
+        JLabel computerTypeLabel = new JLabel("Computer Type");
         computerType = new JComboBox<>();
-        this.checkOrUpdateProductsPanel = checkOrUpdateProductsPanel;
-        devices = new DevicesRunner();
+        this.devices =devices;
 
 
         // Set fonts
@@ -40,9 +35,7 @@ public class BrowseProductsPanel extends JPanel {
 
         //When this panel is loaded, I want to have All selected by default in the categoryComboBox
         computerCategory.setSelectedItem("All");
-
-        // Create a table model
-         model = new DevicesTabelModel(devices.getDevices());
+        computerType.setSelectedItem("All");
 
         // Create JTable with custom model
         JTable table = new JTable(model);
@@ -86,9 +79,9 @@ public class BrowseProductsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedCategory = (String) computerCategory.getSelectedItem();
-                sorter.setRowFilter(new RowFilter<DevicesTabelModel, Integer>() {
+                sorter.setRowFilter(new RowFilter<DevicesTableModel, Integer>() {
                     @Override
-                    public boolean include(Entry<? extends DevicesTabelModel, ? extends Integer> entry) {
+                    public boolean include(Entry<? extends DevicesTableModel, ? extends Integer> entry) {
                         if ("All".equals(selectedCategory)) {
                             return true; // Include all rows
                         }
@@ -103,9 +96,9 @@ public class BrowseProductsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedType = (String) computerType.getSelectedItem();
-                sorter.setRowFilter(new RowFilter<DevicesTabelModel, Integer>() {
+                sorter.setRowFilter(new RowFilter<DevicesTableModel, Integer>() {
                     @Override
-                    public boolean include(Entry<? extends DevicesTabelModel, ? extends Integer> entry) {
+                    public boolean include(Entry<? extends DevicesTableModel, ? extends Integer> entry) {
                         if ("All".equals(selectedType)) {
                             return true; // Include all rows
                         }

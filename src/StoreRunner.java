@@ -25,7 +25,7 @@ public class StoreRunner extends JFrame{
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LoginWindow window = new LoginWindow();
+                LoginWindow window = new LoginWindow(StoreRunner.this);
                 
             }
         });

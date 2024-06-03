@@ -6,47 +6,45 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CheckOrUpdateProducts extends JPanel {
 
-    private boolean isManager;
-    private  JLabel modelLabel;
-    private JTextField modelField;
-    private JLabel brandLabel;
-    private JTextField brandField;
-    private JLabel categoryLabel ;
-    private JComboBox categoryField;
-    private JLabel typeLabel;
-    private JComboBox typeField;
-    private JLabel cpuFamilyLabel;
-    private JTextField cpuFamilyField;
-    private JLabel memorySizeLabel;
-    private JTextField memorySizeField;
-    private JLabel ssdCapacityLabel ;
-    private JTextField ssdCapacityField;
-    private JLabel screenSizeLabel ;
-    private JTextField screenSizeField ;
-    private JLabel priceLabel ;
-    private JTextField priceField ;
-    private JButton addButton;
-    private JButton updateButton;
-    private JButton deleteButton;
-    private JButton clearButton;
+    private final boolean isManager;
+    private final JTextField modelField;
+    private final JTextField brandField;
+    private final JComboBox<String> categoryField;
+    private final JComboBox<String> typeField;
+    private final JTextField cpuFamilyField;
+    private final JLabel memorySizeLabel;
+    private final JTextField memorySizeField;
+    private final JLabel ssdCapacityLabel ;
+    private final JTextField ssdCapacityField;
+    private final JLabel screenSizeLabel ;
+    private final JTextField screenSizeField ;
+    private final JLabel priceLabel ;
+    private final JTextField priceField ;
+    private final JButton addButton;
+    private final JButton updateButton;
+    private final JButton deleteButton;
+    private final JButton clearButton;
     DevicesRunner devices;
+    DevicesTableModel model;
 
-    public CheckOrUpdateProducts(boolean isManager){
+
+    public CheckOrUpdateProducts(boolean isManager, DevicesTableModel tableModel, DevicesRunner devices){
 
         this.isManager = isManager;
-        devices = new DevicesRunner();
+        this.devices = devices;
+        this.model = tableModel;
 
 
         //initialise J Components
-         modelLabel = new JLabel("Model ID:");
+        JLabel modelLabel = new JLabel("Model ID:");
          modelField = new JTextField(20);
-         brandLabel  = new JLabel("Brand");
+        JLabel brandLabel = new JLabel("Brand");
          brandField  = new JTextField(20);
-         categoryLabel = new JLabel("Category:");
-         categoryField = new JComboBox();
-         typeLabel = new JLabel("Type:");
-         typeField = new JComboBox();
-         cpuFamilyLabel = new JLabel("CPU Family");
+        JLabel categoryLabel = new JLabel("Category:");
+         categoryField = new JComboBox<String>();
+        JLabel typeLabel = new JLabel("Type:");
+         typeField = new JComboBox<String>();
+        JLabel cpuFamilyLabel = new JLabel("CPU Family");
          cpuFamilyField = new JTextField(20);
          memorySizeLabel = new JLabel("Memory Size");
          memorySizeField = new JTextField(20);
@@ -70,7 +68,7 @@ public class CheckOrUpdateProducts extends JPanel {
         gbc.weightx = 1; // Allow horizontal expansion
         gbc.weighty = 1; // Allow vertical expansion
 
-        // Add components to panel
+        // Add components to panel. addComponent method/function is called.
         addComponent(gbc, modelLabel, 0, 0);
         addComponent(gbc, modelField, 1, 0);
         addComponent(gbc, categoryLabel, 0, 1);
@@ -112,7 +110,7 @@ public class CheckOrUpdateProducts extends JPanel {
         }
 
 
-        //call the method to enable or disable ability to edit or disable the field.
+        //call the method to enable or disable ability to edit the field.
         updateFieldEditability();
 
         //Add action listener to the Clear button
@@ -147,6 +145,8 @@ public class CheckOrUpdateProducts extends JPanel {
                 }else {
                     // Add the device only if all values are correct
                     devices.addDevice(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price);
+                    model.refreshData(devices.getDevices());
+
 
 
                 }
@@ -164,6 +164,7 @@ public class CheckOrUpdateProducts extends JPanel {
 
                 //once the item is deleted, calling clearField method to clear the fields of any text
                 clearFields();
+                model.refreshData(devices.getDevices());
 
 
             }
@@ -192,7 +193,10 @@ public class CheckOrUpdateProducts extends JPanel {
                     JOptionPane.showMessageDialog(null, "Please correct the input value");
                 }else {
                     // Add the device only if all values are correct
+                    System.out.println("Update");
                     devices.updateDevice(category, type, id, brand, cpuFamily, memorySize, ssdCapacity, screenSize, price);
+                    model.refreshData(devices.getDevices());
+
 
 
                 }
@@ -240,7 +244,7 @@ public class CheckOrUpdateProducts extends JPanel {
         add(component, gbc);
     }
 
-    //This method is called to update the Fields when a row is selected in the JTable. Implementation in the BrowseProductPanel Class
+    //This method is called to update the Fields when a row is selected in the JTable. Called in the BrowseProductPanel Class
     public void updateFields(String category, String type, String id,String brand, String cpuFamily, String memorySize,String ssdCapacity,String  screenSize,double price){
         categoryField.setSelectedItem(category);
         modelField.setText(id);
@@ -264,7 +268,7 @@ public class CheckOrUpdateProducts extends JPanel {
     private void setOptionalFieldText(JTextField field, String value){
         if (!value.equals("null") ) {
             field.setText(value);
-            field.setEditable(isManager);
+            field.setEditable(true);
         } else {
             field.setEditable(false);
             field.setText("");// Set to an empty string if value is null or empty
@@ -322,20 +326,41 @@ public class CheckOrUpdateProducts extends JPanel {
     // Method to update field editability based on the selected category
     private void updateFieldEditabilityBasedOnCategory(String selectedCategory) {
 
-        // Update field editability based on the selected category
+        /* Update field edit ability based on the selected category. Example Desktop PC category has no Screen Size Field.
+           Additionally, cleat the field that are disabled of any values
+        * */
         if ("Desktop PC".equals(selectedCategory)) {
             screenSizeField.setEnabled(false);
+            screenSizeField.setEditable(false); //Make sure users can't edit the field
+            screenSizeField.setText("");
+
             memorySizeField.setEnabled(true);
+            memorySizeField.setEditable(true);
             ssdCapacityField.setEnabled(true);
+            ssdCapacityField.setEditable(true);
         } else if ("Tablet".equals(selectedCategory)) {
             screenSizeField.setEnabled(true);
+            screenSizeField.setEditable(true);
+
             memorySizeField.setEnabled(false);
+            memorySizeField.setEditable(true);
+            memorySizeField.setText("");
+
             ssdCapacityField.setEnabled(false);
+            ssdCapacityField.setEditable(true);
+            ssdCapacityField.setText("");
         } else if ("Laptop".equals(selectedCategory)) {
             screenSizeField.setEnabled(true);
+            screenSizeField.setEditable(true);
             memorySizeField.setEnabled(true);
+            memorySizeField.setEditable(true);
             ssdCapacityField.setEnabled(true);
+            ssdCapacityField.setEditable(true);
         }
+
+        // Revalidate and repaint to ensure UI updates
+        revalidate();
+        repaint();
     }
 
     //Method to clear the fields

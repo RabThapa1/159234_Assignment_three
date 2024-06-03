@@ -1,19 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class ProducstMangement extends JFrame {
+public class ProductManagement extends JFrame {
 
-    private boolean isManager;
-    CheckOrUpdateProducts checkOrUpdateProducts;
-    BrowseProductsPanel browseProductsPanel;
-    DevicesRunner devices;
 
-    public ProducstMangement(boolean isManager){
+    public ProductManagement(boolean isManager){
 
-        this.isManager = isManager;
-
+        //Set Frame details.
         setTitle("Computer Products Management System");
         setBounds(150,200,1000,1000);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -25,15 +18,11 @@ public class ProducstMangement extends JFrame {
         logOutButton.setVerticalTextPosition(SwingConstants.TOP);
         logOutButton.setFont(new Font("Helvetica", Font.PLAIN, 40));
 
-// Initialize CheckOrUpdateProducts and BrowseProductsPanel after DevicesRunner
-        checkOrUpdateProducts = new CheckOrUpdateProducts(isManager);
-        browseProductsPanel = new BrowseProductsPanel(checkOrUpdateProducts);
-         devices = new DevicesRunner();
-
-
-
-
-
+         // Initialize Components
+         DevicesRunner devices = new DevicesRunner();
+         DevicesTableModel tableModel = new DevicesTableModel(devices.getDevices());
+         CheckOrUpdateProducts checkOrUpdateProducts = new CheckOrUpdateProducts(isManager, tableModel, devices);
+         BrowseProductsPanel browseProductsPanel = new BrowseProductsPanel(checkOrUpdateProducts, tableModel, devices);
 
         //Creates a tabbed pane frame and add tabbed panels
         tabbedPane.addTab("Browse Products", browseProductsPanel);
@@ -42,7 +31,7 @@ public class ProducstMangement extends JFrame {
 
         add(logOutButton, BorderLayout.SOUTH);
 
-        //Add Button action listener
+        //Action listener for logout button
         logOutButton.addActionListener(e -> {
             dispose();
             new StoreRunner();

@@ -2,19 +2,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
 
 public class LoginWindow extends JFrame {
 
-    private static LinkedList<Staff> staff;
+    private final JFrame parentFrame;  // Reference to the parent frame
 
-    public LoginWindow(){
+    public LoginWindow(JFrame parentFrame){
 
         //Set properties to the login window
         setTitle("Sales Person Login");
         setBounds(300,90,400,200);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
+
+        this.parentFrame = parentFrame;
 
         //Initialise JComponents required for Login window.
         JLabel userNameLabel = new JLabel("Username: ");
@@ -76,16 +77,30 @@ public class LoginWindow extends JFrame {
                 String pwdText = new String(passwordField.getPassword());
                 boolean isSuccesfull = false;
 
-                for(Staff aStaff : staff){
+                //Initialise the staff class and load the credential.
+                Staff staff = new Staff();
+                staff.loadStaffCredentials();
+
+                try {
+                    staff.loadStaffCredentials(); // Load staff credentials from file
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Error loading staff credentials: " + ex.getMessage());
+                    return;
+                }
+
+
+                //loop through the credentials
+                for(Staff aStaff : staff.getStaffCredentials()){
                     if(userText.equals(aStaff.getUserName()) && pwdText.equals(aStaff.getPassword())){
-                        JOptionPane.showMessageDialog(null,"Login Successfull");
+                        JOptionPane.showMessageDialog(null,"Login Successful");
                         isSuccesfull = true;
+                        parentFrame.dispose();
                         dispose();
                         if(userText.equals("m1") || userText.equals("m2")){
-                            new ProducstMangement(true);
+                            new ProductManagement(true);
                         }
                         else {
-                            new ProducstMangement(false);
+                            new ProductManagement(false);
                         }
 
                     }
@@ -100,8 +115,6 @@ public class LoginWindow extends JFrame {
         cancel.addActionListener(e -> dispose());
 
 
-        //load Staff details to authenticate
-        loadStaffDetails();
 
         setVisible(true);
 
@@ -109,14 +122,4 @@ public class LoginWindow extends JFrame {
 
     }
 
-     static void loadStaffDetails(){
-        staff = new LinkedList<>();
-
-        staff.add(new Staff("staff 1 - Salesperson", "p1", "p1"));
-        staff.add(new Staff("staff 2 - Salesperson", "p2", "p2"));
-        staff.add(new Staff("staff 3 - Salesperson", "p3", "p3"));
-        staff.add(new Staff("staff 4 - Manager", "m1", "m1"));
-        staff.add(new Staff("staff 5 - Manager", "m2", "m2"));
-
-    }
 }
